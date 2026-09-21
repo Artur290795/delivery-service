@@ -1,9 +1,5 @@
-from sqlalchemy import Base, Column, Integer, String, Float, ForeignKey
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase
+
 
 class Base(DeclarativeBase):
     pass
-
-
-    
-

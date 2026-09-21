@@ -1,8 +1,8 @@
 import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import text
+from app.config import DATABASE_URL
 
-DATABASE_URL = "postgresql+asyncpg://delivery_user:delivery_password@localhost:5432/delivery_service"
 engine = create_async_engine(DATABASE_URL, echo=True)
 
 
