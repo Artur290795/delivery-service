@@ -1,0 +1,2 @@
+from app.repositories.parcel_type import ParcelTypeRepository
+from app.repositories.parcel import ParcelRepository
