@@ -19,4 +19,4 @@ class Parcel(Base):
     delivery_cost_rub: Mapped[float | None] = mapped_column(nullable=True)
 
     type: Mapped["ParcelType"] = relationship()
-    
+
