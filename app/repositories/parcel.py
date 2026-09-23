@@ -44,3 +44,27 @@ class ParcelRepository:
         stmt = stmt.limit(limit).offset(offset)
         result = await session.execute(stmt)
         return result.scalars().all()
+
+    @staticmethod
+    async def get_parcel_by_id(
+        session: AsyncSession,
+        parcel_id: int,
+        session_id: str
+    ) -> Parcel | None:
+        stmt = (
+            select(Parcel)
+            .options(selectinload(Parcel.type))
+            .join(Parcel.type)
+            .where(Parcel.id == parcel_id, Parcel.session_id == session_id)
+        )
+        result = await session.execute(stmt)
+        return result.scalar_one_or_none()
+
+    @staticmethod
+    async def get_unprocessed_parcels(session: AsyncSession):
+        stmt = (
+            select(Parcel)
+            .where(Parcel.delivery_cost_rub.is_(None))
+        )
+        result = await session.execute(stmt)
+        return result.scalars().all()

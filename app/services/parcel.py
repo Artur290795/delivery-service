@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.custom_exceptions import InvalidParcelTypeException
+from app.exceptions import InvalidParcelTypeException, ParcelNotFoundException
 from app.repositories import ParcelRepository, ParcelTypeRepository
 from app.schemas.parcel import (
     ParcelCreate,
@@ -69,3 +69,27 @@ class ParcelService:
             }
             result.append(ParcelResponse(**parcel_dict))
         return result
+
+    @staticmethod
+    async def get_parcel_by_id(
+        session: AsyncSession,
+        parcel_id: int,
+        session_id: str
+    ) -> ParcelResponse:
+        
+        parcel = await ParcelRepository.get_parcel_by_id(session, parcel_id, session_id)
+        if not parcel:
+            raise ParcelNotFoundException(f"Parcel with id {parcel_id} not found for the given session.")
+        parcel_dict = {
+            "id": parcel.id,
+            "name": parcel.name,
+            "weight": parcel.weight,
+            "type": parcel.type.name,
+            "content_cost_usd": parcel.content_cost_usd,
+            "delivery_cost_rub": (
+                parcel.delivery_cost_rub
+                if parcel.delivery_cost_rub is not None
+                else "Стоимость посылки еще не рассчитана"
+            ),
+        }
+        return ParcelResponse(**parcel_dict)

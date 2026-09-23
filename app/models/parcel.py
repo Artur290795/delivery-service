@@ -1,4 +1,6 @@
-from sqlalchemy import ForeignKey, CheckConstraint
+from decimal import Decimal
+
+from sqlalchemy import ForeignKey, CheckConstraint, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 from app.models.parcel_type import ParcelType
@@ -13,10 +15,10 @@ class Parcel(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     session_id: Mapped[str] = mapped_column()
     name: Mapped[str] = mapped_column()
-    weight: Mapped[float] = mapped_column()
+    weight: Mapped[Decimal] = mapped_column(Numeric(precision=10, scale=3))
     type_id: Mapped[int] = mapped_column(ForeignKey("parcel_types.id"))
-    content_cost_usd: Mapped[float] = mapped_column()
-    delivery_cost_rub: Mapped[float | None] = mapped_column(nullable=True)
+    content_cost_usd: Mapped[Decimal] = mapped_column(Numeric(precision=12, scale=2))
+    delivery_cost_rub: Mapped[Decimal | None] = mapped_column(Numeric(precision=12, scale=2), nullable=True)
 
     type: Mapped["ParcelType"] = relationship()
 

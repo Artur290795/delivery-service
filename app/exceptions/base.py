@@ -3,3 +3,6 @@ class BaseDeliveryServiceException(Exception):
 
 class InvalidParcelTypeException(BaseDeliveryServiceException):
     pass
+
+class ParcelNotFoundException(BaseDeliveryServiceException):
+    pass

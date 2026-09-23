@@ -1,12 +1,24 @@
-from fastapi import FastAPI, Depends, Request
-
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request
+import httpx
+from app.exceptions import parcel_not_found_exception_handler, ParcelNotFoundException
 from app.sessions.session import create_session, session_exists
 from app.api.routers.parcel_types import router as parcel_types_router
 from app.api.routers.parcel import router as parcel_router
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    client = httpx.AsyncClient()
+    app.state.http_client = client
+    yield
+    await client.aclose()
+
+
+app = FastAPI(lifespan=lifespan)
 app.include_router(parcel_types_router)
 app.include_router(parcel_router)
+app.add_exception_handler(ParcelNotFoundException, parcel_not_found_exception_handler)
 
 
 

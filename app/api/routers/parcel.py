@@ -35,3 +35,12 @@ async def get_parcels(
         delivery_cost_calculated=delivery_cost_calculated,
     )
     return parcels
+
+@router.get("/parcels/{parcel_id}", response_model=ParcelResponse)
+async def get_parcel(
+    parcel_id: int,
+    request: Request,
+    session: AsyncSession = Depends(get_session)
+) -> ParcelResponse | None:
+    parcel = await ParcelService.get_parcel_by_id(session, parcel_id, request.state.session_id)
+    return parcel
