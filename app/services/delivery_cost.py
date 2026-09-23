@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,7 +12,7 @@ class DeliveryCostService:
         result = (
             weight * Decimal("0.5") + content_cost_usd * Decimal("0.01")
         ) * usd_rub_rate
-        return result
+        return result.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
 
     @staticmethod
