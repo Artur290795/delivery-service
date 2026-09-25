@@ -1,8 +1,8 @@
 from decimal import Decimal, ROUND_HALF_UP
 
-import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.protocols.protocols import RateProvider, Cache
 from app.repositories.parcel import ParcelRepository
 from app.services.exchange_rate import ExchangeRateService
 
@@ -16,9 +16,9 @@ class DeliveryCostService:
 
 
     @staticmethod
-    async def calculate_delivery_costs(client: httpx.AsyncClient, session: AsyncSession) -> None:
+    async def calculate_delivery_costs(cache: Cache, rate_provider: RateProvider, session: AsyncSession) -> None:
         unprocessed_parcels = await ParcelRepository.get_unprocessed_parcels(session)
-        rate = await ExchangeRateService.get_usd_rub_rate(client)
+        rate = await ExchangeRateService.get_usd_rub_rate(cache=cache, rate_provider=rate_provider)
         try:
             for parcel in unprocessed_parcels:
                 delivery_cost = DeliveryCostService.calculate(
