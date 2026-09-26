@@ -5,6 +5,7 @@ from app.exceptions import parcel_not_found_exception_handler, ParcelNotFoundExc
 from app.sessions.session import create_session, session_exists
 from app.api.routers.parcel_types import router as parcel_types_router
 from app.api.routers.parcel import router as parcel_router
+from app.api.routers.tasks import task_router
 
 
 @asynccontextmanager
@@ -18,6 +19,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(parcel_types_router)
 app.include_router(parcel_router)
+app.include_router(task_router)
 app.add_exception_handler(ParcelNotFoundException, parcel_not_found_exception_handler)
 
 

@@ -8,7 +8,6 @@ class CBRClient:
     def __init__(self, client: httpx.AsyncClient):
         self.client = client
 
-    @staticmethod
     async def get_usd_rub_rate(self) -> Decimal:
         response = await self.client.get(CBR_URL)
         response.raise_for_status()

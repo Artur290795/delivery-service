@@ -1,10 +1,16 @@
 from decimal import Decimal, ROUND_HALF_UP
 
+import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.protocols.protocols import RateProvider, Cache
 from app.repositories.parcel import ParcelRepository
 from app.services.exchange_rate import ExchangeRateService
+from app.db.postgres import async_session_maker
+
+
+
+
 
 class DeliveryCostService:
     @staticmethod
