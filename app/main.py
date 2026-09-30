@@ -6,12 +6,26 @@ from app.sessions.session import create_session, session_exists
 from app.api.routers.parcel_types import router as parcel_types_router
 from app.api.routers.parcel import router as parcel_router
 from app.api.routers.tasks import task_router
-
+from app.api.routers.support import router as support_router
+from app.services.support import SupportService
+from app.services.embedding import EmbeddingService
+from app.clients.qdrant import router as qdrant_router, QdrantService
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     client = httpx.AsyncClient()
     app.state.http_client = client
+
+    emb_service = EmbeddingService()
+    app.state.emb_service = emb_service
+
+    qdrant_service = QdrantService()
+    qdrant_service.ensure_collection()
+    app.state.qdrant_service = qdrant_service
+
+    support_service = SupportService(emb_service, qdrant_service)
+    app.state.support_service = support_service
+    
     yield
     await client.aclose()
 
@@ -20,9 +34,9 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(parcel_types_router)
 app.include_router(parcel_router)
 app.include_router(task_router)
+app.include_router(support_router)
+app.include_router(qdrant_router)
 app.add_exception_handler(ParcelNotFoundException, parcel_not_found_exception_handler)
-
-
 
 
 
