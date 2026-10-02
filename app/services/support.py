@@ -1,14 +1,21 @@
 from app.services.embedding import EmbeddingService
+from app.services.llm import LLMService
 from app.clients.qdrant import QdrantService
+from app.exceptions.base import SimilarVectorNotFoundException
 
 
 class SupportService:
-    def __init__(self, emb_service: EmbeddingService, qdrant_service: QdrantService):
+    def __init__(self, emb_service: EmbeddingService, qdrant_service: QdrantService, llm_service: LLMService):
         self.emb_service = emb_service
         self.qdrant_service = qdrant_service
+        self.llm_service = llm_service
 
-    async def get_question(self, question: str) -> list[str]:
+    async def get_question(self, question: str) -> str:
         vector = self.emb_service.convert_text_to_vector(question)
-        similars = await self.qdrant_service.search_similar(vector)
-        llm_context = [similar.payload["text"] for similar in similars]
-        return llm_context
+        similar = await self.qdrant_service.search_similar(vector)
+        if similar and similar.score >= 0.6:
+            answer = await self.llm_service.generate_answer(
+                question, similar.payload["text"]
+            )
+            return answer
+        raise SimilarVectorNotFoundException("Similar vector not found")

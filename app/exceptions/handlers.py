@@ -9,3 +9,5 @@ async def parcel_not_found_exception_handler(request : Request, exc: ParcelNotFo
         status_code=status.HTTP_404_NOT_FOUND,
         content={"detail": str(exc)},
     )
+
+

@@ -11,10 +11,5 @@ router = APIRouter()
 async def get_support(
     support_req: SupportRequest,
     support_service: SupportService = Depends(get_support_service),
-) -> list[float]:
+) -> str:
     return await support_service.get_question(support_req.question)
-
-
-@router.get("/text-search")
-async def text_search(request: Request):
-    pass

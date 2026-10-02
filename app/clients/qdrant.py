@@ -3,7 +3,6 @@ from qdrant_client.models import Distance, VectorParams, PointStruct, ScoredPoin
 from qdrant_client.http.exceptions import UnexpectedResponse
 
 
-
 class QdrantService:
     _COLLECTION_NAME = "delivery_knowledge"
 
@@ -13,19 +12,22 @@ class QdrantService:
             port=6333,
         )
 
-    async def add_point(self, point: PointStruct) -> None:
+    async def add_points(self, points: list[PointStruct]) -> None:
         await self.client.upsert(
             collection_name=self._COLLECTION_NAME,
-            points=[point],
+            points=points,
         )
 
-    async def search_similar(self, vector: list[float]) -> list[ScoredPoint]:
+    async def search_similar(self, vector: list[float]) -> ScoredPoint | None:
         results = await self.client.query_points(
-                collection_name=self._COLLECTION_NAME,
-                query=vector,
-                limit=3,
-            )
-        return results.points
+            collection_name=self._COLLECTION_NAME,
+            query=vector,
+            limit=1,
+        )
+        if results.points:
+            return results.points[0]
+
+        return None
 
     async def ensure_collection(self):
         try:
@@ -33,11 +35,22 @@ class QdrantService:
         except UnexpectedResponse as exc:
             if exc.status_code == 404:
                 await self.client.create_collection(
-                        collection_name=self._COLLECTION_NAME,
-                        vectors_config=VectorParams(
-                            size=384,
-                            distance=Distance.COSINE,
-                        ),
-                    )
+                    collection_name=self._COLLECTION_NAME,
+                    vectors_config=VectorParams(
+                        size=384,
+                        distance=Distance.COSINE,
+                    ),
+                )
             else:
                 raise
+
+    async def recreate_collection(self):
+        await self.client.delete_collection(self._COLLECTION_NAME)
+
+        await self.client.create_collection(
+            collection_name=self._COLLECTION_NAME,
+            vectors_config=VectorParams(
+                size=384,
+                distance=Distance.COSINE,
+            ),
+        )

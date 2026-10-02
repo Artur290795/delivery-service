@@ -1,12 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.pool import NullPool
-from sqlalchemy import text
-from app.config import DATABASE_URL
+from app.config import settings
 
-engine = create_async_engine(DATABASE_URL, echo=True, poolclass=NullPool)
+engine = create_async_engine(settings.database_url, echo=True, poolclass=NullPool)
 async_session_maker = async_sessionmaker(engine)
-
-async def test_connection():
-    async with engine.connect() as conn:
-        result = await conn.execute(text("SELECT 1"))
-    return result.scalar()

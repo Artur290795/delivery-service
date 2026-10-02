@@ -1,14 +1,19 @@
-def split_text(text: str, chunk_size: int, overlap: int) -> list[str]:
+def split_text(text: str) -> list[str]:
+    paragraphs = [
+        paragraph.strip() for paragraph in text.split("\n") if paragraph.strip()
+    ]
 
-    text_size = len(text)
-    
-    if text_size < chunk_size:
-        return [text]
-    result = []
-    step = chunk_size - overlap
+    chunks = []
 
-    for start in range(0, text_size, step):
-        end = start + chunk_size
-        result.append(text[start:end])
+    for index, paragraph in enumerate(paragraphs):
+        chunk = paragraph
 
-    return result
+        if index > 0:
+            chunk = paragraphs[index - 1] + "\n" + chunk
+
+        if index < len(paragraphs) - 1:
+            chunk = chunk + "\n" + paragraphs[index + 1]
+
+        chunks.append(chunk)
+
+    return chunks
