@@ -12,4 +12,4 @@ async def get_support(
     support_req: SupportRequest,
     support_service: SupportService = Depends(get_support_service),
 ) -> str:
-    return await support_service.get_question(support_req.question)
+    return await support_service.get_answer(support_req.question)

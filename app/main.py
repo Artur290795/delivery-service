@@ -34,8 +34,7 @@ async def lifespan(app: FastAPI):
 
     ingestion_service = IngestionService(emb_service, qdrant_service)
     app.state.ingestion_service = ingestion_service
-    # await ingestion_service.ingest(DOCUMENT)
-    llm_service = LLMService(api_key=settings.openai_api_key)
+    llm_service = LLMService(api_key=settings.yandex_api_key, folder_id=settings.yandex_folder_id)
     support_service = SupportService(emb_service, qdrant_service, llm_service)
     app.state.support_service = support_service
 
