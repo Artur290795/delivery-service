@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import LogData
 from app.protocols import RateProvider, Cache
 from app.repositories import ParcelRepository
-from app.services import DeliveryCostLogService, ExchangeRateService
+from app.services.delivery_cost_log import DeliveryCostLogService
+from app.services.exchange_rate import ExchangeRateService
 
 
 class DeliveryCostService:
@@ -40,7 +41,7 @@ class DeliveryCostService:
                 parcel.delivery_cost_rub = delivery_cost
                 log_data = LogData(
                     parcel_id=parcel.id,
-                    parcel_type=parcel.type,
+                    parcel_type=parcel.type.name,
                     delivery_cost=delivery_cost,
                     calculated_at=datetime.now(timezone.utc),
                 )

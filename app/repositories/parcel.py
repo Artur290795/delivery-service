@@ -47,9 +47,7 @@ class ParcelRepository:
 
     @staticmethod
     async def get_parcel_by_id(
-        session: AsyncSession,
-        parcel_id: int,
-        session_id: str
+        session: AsyncSession, parcel_id: int, session_id: str
     ) -> Parcel | None:
         stmt = (
             select(Parcel)
@@ -64,6 +62,7 @@ class ParcelRepository:
     async def get_unprocessed_parcels(session: AsyncSession):
         stmt = (
             select(Parcel)
+            .options(selectinload(Parcel.type))
             .where(Parcel.delivery_cost_rub.is_(None))
         )
         result = await session.execute(stmt)

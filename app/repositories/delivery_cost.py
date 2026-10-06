@@ -1,7 +1,6 @@
 from bson import Decimal128
 from datetime import date, datetime, timedelta
 
-from app.schemas import ParcelType
 from app.models import LogData
 
 
@@ -13,21 +12,21 @@ class DeliveryCostLogRepository:
         await self.collection.insert_one(
             {
                 "parcel_id": log_data.parcel_id,
-                "parcel_type": log_data.parcel_type.value,
+                "parcel_type": log_data.parcel_type,
                 "delivery_cost": Decimal128(str(log_data.delivery_cost)),
                 "calculated_at": log_data.calculated_at,
             }
         )
 
     async def get_logs_by_date_and_type(
-        self, date: date, parcel_type: ParcelType
+        self, date: date, parcel_type: str
     ) -> list[LogData]:
         start_of_day = datetime.combine(date, datetime.min.time())
         next_day = start_of_day + timedelta(days=1)
         pipeline = [
             {
                 "$match": {
-                    "parcel_type": parcel_type.value,
+                    "parcel_type": parcel_type,
                     "calculated_at": {
                         "$gte": start_of_day,
                         "$lt": next_day,
@@ -36,14 +35,14 @@ class DeliveryCostLogRepository:
             }
         ]
 
-        cursor = self.collection.aggregate(pipeline)
+        cursor = await self.collection.aggregate(pipeline)
 
         raw_result = await cursor.to_list(length=None)
 
         result = [
             LogData(
                 doc["parcel_id"],
-                ParcelType(doc["parcel_type"]),
+                doc["parcel_type"],
                 doc["delivery_cost"].to_decimal(),
                 doc["calculated_at"],
             )
