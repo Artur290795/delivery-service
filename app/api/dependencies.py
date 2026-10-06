@@ -1,8 +1,7 @@
 import httpx
 from fastapi import Request
-from app.db.postgres import async_session_maker
-from app.services.delivery_cost_log import DeliveryCostLogService
-from app.services.support import SupportService
+from app.db import async_session_maker
+from app.services import DeliveryCostLogService, SupportService
 
 async def get_session():
     async with async_session_maker() as session:

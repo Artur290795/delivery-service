@@ -1,5 +1,5 @@
 import secrets
-from app.cache.redis import redis
+from app.cache import redis
 
 async def create_session() -> str:
     session_id = secrets.token_urlsafe(32)

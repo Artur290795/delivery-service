@@ -1,6 +1,5 @@
-from app.services.embedding import EmbeddingService
-from app.services.llm import LLMService
-from app.clients.qdrant import QdrantService
+from app.services import EmbeddingService, LLMService
+from app.clients import QdrantService
 
 
 class SupportService:

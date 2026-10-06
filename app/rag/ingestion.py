@@ -1,8 +1,8 @@
 from uuid import uuid4
 
 from qdrant_client.models import PointStruct
-from app.services.embedding import EmbeddingService
-from app.clients.qdrant import QdrantService
+from app.services import EmbeddingService
+from app.clients import QdrantService
 from app.rag.chunking import split_text
 # если больше нигде не использую split_text надо его сюда зафигачить как статикметод
 

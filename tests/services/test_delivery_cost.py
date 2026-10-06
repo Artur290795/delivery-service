@@ -3,8 +3,8 @@ from decimal import Decimal
 
 import pytest
 
-from app.models.parcel import Parcel
-from app.services.delivery_cost import DeliveryCostService
+from app.models import Parcel
+from app.services import DeliveryCostService
 from tests.services.test_exchange_rate import FakeCache, FakeRateProvider
 
 

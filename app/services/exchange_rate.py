@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from app.protocols.protocols import RateProvider, Cache
+from app.protocols import RateProvider, Cache
 
 class ExchangeRateService:
 

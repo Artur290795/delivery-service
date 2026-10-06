@@ -1,21 +1,26 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 import httpx
-from pymongo import AsyncMongoClient
+
 from app.exceptions import parcel_not_found_exception_handler, ParcelNotFoundException
-from app.repositories.delivery_cost import DeliveryCostLogRepository
-from app.services.delivery_cost_log import DeliveryCostLogService
-from app.sessions.session import create_session, session_exists
-from app.api.routers.parcel_types import router as parcel_types_router
-from app.api.routers.parcel import router as parcel_router
-from app.api.routers.tasks import task_router
-from app.api.routers.support import router as support_router
-from app.services.support import SupportService
-from app.services.embedding import EmbeddingService
-from app.services.llm import LLMService
-from app.clients.qdrant import QdrantService
-from app.rag.ingestion import IngestionService
-from app.db.mongo import get_delivery_cost_log_collection, client as mongo_client
+from app.repositories import DeliveryCostLogRepository
+from app.services import (
+    DeliveryCostLogService,
+    SupportService,
+    EmbeddingService,
+    LLMService,
+)
+from app.sessions import create_session, session_exists
+from app.api import (
+    parcel_types_router,
+    parcel_router,
+    task_router,
+    support_router,
+    delivery_costs_router,
+)
+from app.clients import QdrantService
+from app.rag import IngestionService
+from app.db import get_delivery_cost_log_collection, mongo_client
 from app.config import settings
 
 # DOCUMENT = """
@@ -63,6 +68,7 @@ app.include_router(parcel_types_router)
 app.include_router(parcel_router)
 app.include_router(task_router)
 app.include_router(support_router)
+app.include_router(delivery_costs_router)
 app.add_exception_handler(ParcelNotFoundException, parcel_not_found_exception_handler)
 
 

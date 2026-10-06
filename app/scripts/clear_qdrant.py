@@ -1,6 +1,6 @@
 import asyncio
 
-from app.clients.qdrant import QdrantService
+from app.clients import QdrantService
 
 
 async def main():

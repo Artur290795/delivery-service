@@ -2,8 +2,8 @@ from datetime import date
 from decimal import Decimal
 
 from app.models.log_data import LogData
-from app.repositories.delivery_cost import DeliveryCostLogRepository
-from app.schemas.parcel import ParcelType
+from app.repositories import DeliveryCostLogRepository
+from app.schemas import ParcelType
 
 
 class DeliveryCostLogService:

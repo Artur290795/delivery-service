@@ -1,7 +1,7 @@
 from bson import Decimal128
 from datetime import date, datetime, timedelta
 
-from app.schemas.parcel import ParcelType
+from app.schemas import ParcelType
 from app.models import LogData
 
 

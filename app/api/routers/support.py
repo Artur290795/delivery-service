@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 
 from app.api.dependencies import get_support_service
-from app.schemas.support import SupportRequest
-from app.services.support import SupportService
+from app.schemas import SupportRequest
+from app.services import SupportService
 
 router = APIRouter()
 

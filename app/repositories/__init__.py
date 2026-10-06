@@ -1,2 +1,3 @@
 from app.repositories.parcel_type import ParcelTypeRepository
 from app.repositories.parcel import ParcelRepository
+from app.repositories.delivery_cost import DeliveryCostLogRepository

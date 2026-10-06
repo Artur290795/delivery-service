@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.exceptions import InvalidParcelTypeException, ParcelNotFoundException
 from app.models.parcel import Parcel
 from app.repositories import ParcelRepository, ParcelTypeRepository
-from app.schemas.parcel import (
+from app.schemas import (
     ParcelCreate,
     ParcelCreateResponse,
     ParcelResponse,

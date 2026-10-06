@@ -1,10 +1,10 @@
 from datetime import datetime, timezone, date, timedelta
 from decimal import Decimal
 
-from app.models.log_data import LogData
-from app.schemas.parcel import ParcelType
-from app.repositories.delivery_cost import DeliveryCostLogRepository
-from app.services.delivery_cost_log import DeliveryCostLogService
+from app.models import LogData
+from app.schemas import ParcelType
+from app.repositories import DeliveryCostLogRepository
+from app.services import DeliveryCostLogService
 
 from tests.conftest import get_test_delivery_cost_logs_collection
 

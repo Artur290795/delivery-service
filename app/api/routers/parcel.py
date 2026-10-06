@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import get_session
-from app.schemas.parcel import (
+from app.schemas import (
     ParcelCreate,
     ParcelCreateResponse,
     ParcelResponse,
     ParcelType,
 )
-from app.services.parcel import ParcelService
+from app.services import ParcelService
 
 router = APIRouter()
 

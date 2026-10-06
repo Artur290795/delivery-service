@@ -3,11 +3,10 @@ from decimal import Decimal, ROUND_HALF_UP
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.log_data import LogData
-from app.protocols.protocols import RateProvider, Cache
-from app.repositories.parcel import ParcelRepository
-from app.services.delivery_cost_log import DeliveryCostLogService
-from app.services.exchange_rate import ExchangeRateService
+from app.models import LogData
+from app.protocols import RateProvider, Cache
+from app.repositories import ParcelRepository
+from app.services import DeliveryCostLogService, ExchangeRateService
 
 
 class DeliveryCostService:

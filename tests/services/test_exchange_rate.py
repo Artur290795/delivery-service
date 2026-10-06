@@ -2,7 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-from app.services.exchange_rate import ExchangeRateService
+from app.services import ExchangeRateService
 
 
 class FakeCache:

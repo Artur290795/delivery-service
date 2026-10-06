@@ -3,13 +3,11 @@ import asyncio
 import httpx
 from redis.asyncio import Redis
 
-from app.clients.cbr import CBRClient
+from app.clients import CBRClient
 from app.celery_app import celery_app
-from app.db.postgres import async_session_maker
-from app.services.delivery_cost import DeliveryCostService
-from app.repositories.delivery_cost import DeliveryCostLogRepository
-from app.services.delivery_cost_log import DeliveryCostLogService
-from app.db.mongo import get_delivery_cost_log_collection
+from app.db import async_session_maker, get_delivery_cost_log_collection
+from app.services import DeliveryCostService, DeliveryCostLogService
+from app.repositories import DeliveryCostLogRepository
 
 
 @celery_app.task
