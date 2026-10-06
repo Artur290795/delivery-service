@@ -1,7 +1,10 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 import httpx
+from pymongo import AsyncMongoClient
 from app.exceptions import parcel_not_found_exception_handler, ParcelNotFoundException
+from app.repositories.delivery_cost import DeliveryCostLogRepository
+from app.services.delivery_cost_log import DeliveryCostLogService
 from app.sessions.session import create_session, session_exists
 from app.api.routers.parcel_types import router as parcel_types_router
 from app.api.routers.parcel import router as parcel_router
@@ -12,7 +15,9 @@ from app.services.embedding import EmbeddingService
 from app.services.llm import LLMService
 from app.clients.qdrant import QdrantService
 from app.rag.ingestion import IngestionService
+from app.db.mongo import get_delivery_cost_log_collection, client as mongo_client
 from app.config import settings
+
 # DOCUMENT = """
 # Доставка одежды осуществляется по России.
 # Стоимость доставки зависит от веса посылки и стоимости содержимого.
@@ -22,8 +27,8 @@ from app.config import settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    client = httpx.AsyncClient()
-    app.state.http_client = client
+    http_client = httpx.AsyncClient()
+    app.state.http_client = http_client
 
     emb_service = EmbeddingService()
     app.state.emb_service = emb_service
@@ -34,12 +39,23 @@ async def lifespan(app: FastAPI):
 
     ingestion_service = IngestionService(emb_service, qdrant_service)
     app.state.ingestion_service = ingestion_service
-    llm_service = LLMService(api_key=settings.yandex_api_key, folder_id=settings.yandex_folder_id)
+    llm_service = LLMService(
+        api_key=settings.yandex_api_key, folder_id=settings.yandex_folder_id
+    )
     support_service = SupportService(emb_service, qdrant_service, llm_service)
     app.state.support_service = support_service
 
+    collection = get_delivery_cost_log_collection()
+    await collection.create_index(
+        [("parcel_id", 1)],
+        unique=True,
+    )
+    delivery_cost_log_repo = DeliveryCostLogRepository(collection)
+    app.state.delivery_cost_log_service = DeliveryCostLogService(delivery_cost_log_repo)
+
     yield
-    await client.aclose()
+    await http_client.aclose()
+    await mongo_client.aclose()
 
 
 app = FastAPI(lifespan=lifespan)

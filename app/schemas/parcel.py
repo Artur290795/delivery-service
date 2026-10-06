@@ -1,3 +1,4 @@
+from datetime import date
 from decimal import Decimal
 from enum import Enum
 
@@ -28,3 +29,9 @@ class ParcelResponse(BaseModel):
     type: ParcelType
     content_cost_usd: Decimal
     delivery_cost_rub: Decimal | str
+
+
+class DeliveryCostSummaryResponse(BaseModel):
+    target_date: date
+    parcel_type: ParcelType
+    total_delivery_cost: Decimal

@@ -1,0 +1,18 @@
+from datetime import date
+from app.models.log_data import LogData
+from app.repositories.delivery_cost import DeliveryCostLogRepository
+from app.schemas.parcel import ParcelType
+
+
+class DeliveryCostLogService:
+    def __init__(self, delivery_cost_log_repo: DeliveryCostLogRepository):
+        self.log_data_repository = delivery_cost_log_repo
+
+    async def get_summary(self, target_date: date, parcel_type: ParcelType):
+        result = await self.log_data_repository.get_logs_by_date_and_type(
+            target_date, parcel_type
+        )
+        return sum(log.delivery_cost for log in result)
+
+    async def create_log(self, log_data: LogData):
+        await self.log_data_repository.create_log(log_data)
