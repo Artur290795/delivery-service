@@ -17,7 +17,7 @@ from app.api import (
     support_router,
     delivery_costs_router,
 )
-from app.clients import QdrantService
+from app.clients import QdrantClient
 from app.rag import IngestionService
 from app.db import get_delivery_cost_log_collection, mongo_client
 from app.config import settings
@@ -31,22 +31,22 @@ from app.config import settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    http_client = httpx.AsyncClient()
+    http_client = httpx.AsyncClient(timeout=settings.http_timeout_seconds)
     app.state.http_client = http_client
 
     emb_service = EmbeddingService()
     app.state.emb_service = emb_service
 
-    qdrant_service = QdrantService()
-    await qdrant_service.ensure_collection()
-    app.state.qdrant_service = qdrant_service
+    qdrant_client = QdrantClient()
+    await qdrant_client.ensure_collection()
+    app.state.qdrant_client = qdrant_client
 
-    ingestion_service = IngestionService(emb_service, qdrant_service)
+    ingestion_service = IngestionService(emb_service, qdrant_client)
     app.state.ingestion_service = ingestion_service
     llm_service = LLMService(
         api_key=settings.yandex_api_key, folder_id=settings.yandex_folder_id
     )
-    support_service = SupportService(emb_service, qdrant_service, llm_service)
+    support_service = SupportService(emb_service, qdrant_client, llm_service)
     app.state.support_service = support_service
 
     collection = get_delivery_cost_log_collection()

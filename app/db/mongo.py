@@ -1,10 +1,9 @@
 from pymongo import AsyncMongoClient
 
-MONGO_URL = "mongodb://localhost:27017"
+from app.config import settings
 
-client = AsyncMongoClient(MONGO_URL)
-
-db = client["delivery_service"]
+client = AsyncMongoClient(settings.mongo_url)
+db = client[settings.mongo_database_name]
 
 
 def get_delivery_cost_log_collection():

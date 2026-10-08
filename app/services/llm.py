@@ -1,13 +1,15 @@
 from openai import AsyncOpenAI
 
+from app.config import settings
+
 
 class LLMService:
     def __init__(self, api_key: str, folder_id: str):
         self.client = AsyncOpenAI(
             api_key=api_key,
-            base_url="https://ai.api.cloud.yandex.net/v1",
+            base_url=settings.yandex_api_base_url,
         )
-        self.model_uri = f"gpt://{folder_id}/yandexgpt/latest"
+        self.model_uri = f"gpt://{folder_id}/{settings.yandex_model_name}"
 
     async def generate_answer(self, question: str, context: str):
         response = await self.client.chat.completions.create(

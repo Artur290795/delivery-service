@@ -1,11 +1,11 @@
 import secrets
 from app.cache import redis
+from app.config import settings
 
 async def create_session() -> str:
     session_id = secrets.token_urlsafe(32)
-    expiration_time = 60 * 60 * 24 # сутки
     redis_key = f"session:{session_id}"
-    await redis.set(redis_key, 1, ex=expiration_time)
+    await redis.set(redis_key, 1, ex=settings.session_ttl_seconds)
     return session_id
 
 

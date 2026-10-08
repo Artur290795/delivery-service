@@ -2,14 +2,14 @@ from uuid import uuid4
 
 from qdrant_client.models import PointStruct
 from app.services import EmbeddingService
-from app.clients import QdrantService
+from app.clients import QdrantClient
 from app.rag.chunking import split_text
 # если больше нигде не использую split_text надо его сюда зафигачить как статикметод
 
 class IngestionService:
-    def __init__(self, emb_service: EmbeddingService, qdrant_service: QdrantService):
+    def __init__(self, emb_service: EmbeddingService, qdrant_client: QdrantClient):
         self.emb_service = emb_service
-        self.qdrant_service = qdrant_service
+        self.qdrant_client = qdrant_client
 
     async def ingest(self, document: str):
         print(123)
@@ -27,4 +27,4 @@ class IngestionService:
         for (chunk, vector) in zip(chunks, vectors):
             point = PointStruct(id=uuid4(), vector=vector, payload={"text": chunk})
             points.append(point)
-        await self.qdrant_service.add_points(points)
+        await self.qdrant_client.add_points(points)

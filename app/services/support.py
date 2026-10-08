@@ -1,5 +1,5 @@
 from app.services import EmbeddingService, LLMService
-from app.clients import QdrantService
+from app.clients import QdrantClient
 
 
 class SupportService:
@@ -11,16 +11,16 @@ class SupportService:
     def __init__(
         self,
         emb_service: EmbeddingService,
-        qdrant_service: QdrantService,
+        qdrant_client: QdrantClient,
         llm_service: LLMService,
     ):
         self.emb_service = emb_service
-        self.qdrant_service = qdrant_service
+        self.qdrant_client = qdrant_client
         self.llm_service = llm_service
 
     async def get_answer(self, question: str) -> str:
         vector = self.emb_service.convert_text_to_vector(question)
-        similar = await self.qdrant_service.search_similar(vector)
+        similar = await self.qdrant_client.search_similar(vector)
         if similar and similar.score >= 0.6:
             answer = await self.llm_service.generate_answer(
                 question, similar.payload["text"]

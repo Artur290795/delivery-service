@@ -2,9 +2,9 @@ services:
   postgres:
     image: postgres:17
     environment:
-      POSTGRES_DB: delivery_service
-      POSTGRES_USER: delivery_user
-      POSTGRES_PASSWORD: delivery_password
+      POSTGRES_DB: ${POSTGRES_DB:-delivery_service}
+      POSTGRES_USER: ${POSTGRES_USER:-delivery_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-delivery_password}
     ports:
       - "5433:5432"
     volumes:

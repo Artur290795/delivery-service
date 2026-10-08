@@ -1,16 +1,15 @@
 import asyncio
+
 import asyncpg
+
+from app.config import settings
 
 
 async def check_connection():
-    conn = await asyncpg.connect(
-    user="delivery_user",
-    password="delivery_password",
-    database="delivery_service",
-    host="localhost",
-    port=5433,
-    ssl=False,
+    database_url = settings.database_url.replace(
+        "postgresql+asyncpg://", "postgresql://", 1
     )
+    conn = await asyncpg.connect(database_url, ssl=False)
     result = await conn.fetchval("SELECT 1")
     await conn.close()
     return result

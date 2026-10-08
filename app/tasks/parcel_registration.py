@@ -4,6 +4,7 @@ import httpx
 from redis.asyncio import Redis
 
 from app.clients import CBRClient
+from app.config import settings
 from app.db import async_session_maker, get_delivery_cost_log_collection
 from app.repositories import DeliveryCostLogRepository
 from app.schemas import ParcelCreate
@@ -22,8 +23,8 @@ async def register_parcel(parcel_data: dict, session_id: str) -> int:
     log_service = DeliveryCostLogService(
         DeliveryCostLogRepository(collection),
     )
-    async with Redis(host="localhost", port=6379) as cache:
-        async with httpx.AsyncClient() as client:
+    async with Redis.from_url(settings.redis_url) as cache:
+        async with httpx.AsyncClient(timeout=settings.http_timeout_seconds) as client:
             async with async_session_maker() as session:
                 result = await ParcelService.create_calculated(
                     session=session,

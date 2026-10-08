@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from app.protocols import RateProvider, Cache
+from app.config import settings
 
 class ExchangeRateService:
 
@@ -13,5 +14,9 @@ class ExchangeRateService:
             return Decimal(rate.decode("utf-8"))
         rate = await rate_provider.get_usd_rub_rate()
         
-        await cache.set(ExchangeRateService._REDIS_KEY, str(rate), ex=300) # 5 минут
+        await cache.set(
+            ExchangeRateService._REDIS_KEY,
+            str(rate),
+            ex=settings.exchange_rate_cache_ttl_seconds,
+        )
         return rate

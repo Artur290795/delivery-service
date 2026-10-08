@@ -2,25 +2,23 @@ from qdrant_client import AsyncQdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct, ScoredPoint
 from qdrant_client.http.exceptions import UnexpectedResponse
 
+from app.config import settings
 
-class QdrantService:
-    _COLLECTION_NAME = "delivery_knowledge"
 
+class QdrantClient:
     def __init__(self):
-        self.client = AsyncQdrantClient(
-            host="localhost",
-            port=6333,
-        )
+        self.client = AsyncQdrantClient(url=settings.qdrant_url)
+        self.collection_name = settings.qdrant_collection_name
 
     async def add_points(self, points: list[PointStruct]) -> None:
         await self.client.upsert(
-            collection_name=self._COLLECTION_NAME,
+            collection_name=self.collection_name,
             points=points,
         )
 
     async def search_similar(self, vector: list[float]) -> ScoredPoint | None:
         results = await self.client.query_points(
-            collection_name=self._COLLECTION_NAME,
+            collection_name=self.collection_name,
             query=vector,
             limit=1,
         )
@@ -31,11 +29,11 @@ class QdrantService:
 
     async def ensure_collection(self):
         try:
-            await self.client.get_collection(self._COLLECTION_NAME)
+            await self.client.get_collection(self.collection_name)
         except UnexpectedResponse as exc:
             if exc.status_code == 404:
                 await self.client.create_collection(
-                    collection_name=self._COLLECTION_NAME,
+                    collection_name=self.collection_name,
                     vectors_config=VectorParams(
                         size=384,
                         distance=Distance.COSINE,
@@ -45,10 +43,9 @@ class QdrantService:
                 raise
 
     async def recreate_collection(self):
-        await self.client.delete_collection(self._COLLECTION_NAME)
-
+        await self.client.delete_collection(self.collection_name)
         await self.client.create_collection(
-            collection_name=self._COLLECTION_NAME,
+            collection_name=self.collection_name,
             vectors_config=VectorParams(
                 size=384,
                 distance=Distance.COSINE,

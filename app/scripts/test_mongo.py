@@ -4,10 +4,12 @@ from datetime import datetime, timezone
 
 from pymongo import AsyncMongoClient
 
+from app.config import settings
+
 
 async def test_mongodb():
-    client = AsyncMongoClient("mongodb://localhost:27017")
-    collection = client["delivery_service"]["delivery_cost_logs"]
+    client = AsyncMongoClient(settings.mongo_url)
+    collection = client[settings.mongo_database_name]["delivery_cost_logs"]
     try:
         index_name = await create_indexes(client)
         insert_result = await collection.insert_one(
@@ -32,7 +34,7 @@ async def test_mongodb():
     return insert_result.inserted_id
 
 async def create_indexes(client: AsyncMongoClient):
-    collection = client["delivery_service"]["delivery_cost_logs"]
+    collection = client[settings.mongo_database_name]["delivery_cost_logs"]
     index_name = await collection.create_index(
         [("parcel_id", 1)],
         unique=True,
