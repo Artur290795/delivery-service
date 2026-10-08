@@ -13,6 +13,11 @@ services:
     image: redis:8
     ports:
       - "6379:6379"
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
   qdrant:
     image: qdrant/qdrant
     ports:

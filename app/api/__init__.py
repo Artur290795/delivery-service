@@ -6,7 +6,6 @@ from app.api.dependencies import (
 )
 
 from app.api.routers import (
-    task_router,
     delivery_costs_router,
     parcel_router,
     parcel_types_router,

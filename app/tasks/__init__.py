@@ -1,1 +1,1 @@
-from app.tasks.delivery_cost import calculate_delivery_costs_task
+from app.tasks.parcel_registration import register_parcel_task

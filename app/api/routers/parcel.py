@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import get_session
@@ -9,17 +9,19 @@ from app.schemas import (
     ParcelType,
 )
 from app.services import ParcelService
+from app.tasks.parcel_registration import register_parcel_task
 
 router = APIRouter()
 
 
-@router.post("/parcels", response_model=ParcelCreateResponse)
-async def create_parcel(
-    request: Request, parcel: ParcelCreate, session: AsyncSession = Depends(get_session)
-):
-    session_id = request.state.session_id
-    new_parcel = await ParcelService.create(session, parcel, session_id)
-    return new_parcel
+@router.post(
+    "/parcels", response_model=ParcelCreateResponse, status_code=status.HTTP_202_ACCEPTED
+)
+async def create_parcel(request: Request, parcel: ParcelCreate):
+    task = register_parcel_task.delay(
+        parcel.model_dump(mode="json"), request.state.session_id
+    )
+    return ParcelCreateResponse(status="accepted", task_id=task.id)
 
 
 @router.get("/parcels", response_model=list[ParcelResponse])

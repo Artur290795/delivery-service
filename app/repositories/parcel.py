@@ -14,6 +14,7 @@ class ParcelRepository:
             weight=parcel_data["weight"],
             type_id=parcel_data["type_id"],
             content_cost_usd=parcel_data["content_cost_usd"],
+            delivery_cost_rub=parcel_data["delivery_cost_rub"],
         )
         session.add(parcel)
         await session.flush()

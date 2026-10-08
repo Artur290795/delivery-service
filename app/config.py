@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     yandex_folder_id: str
 
     model_config = SettingsConfigDict(env_file=".env")
+    rabbitmq_url: str = "amqp://guest:guest@localhost:5672//"
 
 
 settings = Settings()

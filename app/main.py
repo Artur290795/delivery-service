@@ -14,7 +14,6 @@ from app.sessions import create_session, session_exists
 from app.api import (
     parcel_types_router,
     parcel_router,
-    task_router,
     support_router,
     delivery_costs_router,
 )
@@ -66,7 +65,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(parcel_types_router)
 app.include_router(parcel_router)
-app.include_router(task_router)
 app.include_router(support_router)
 app.include_router(delivery_costs_router)
 app.add_exception_handler(ParcelNotFoundException, parcel_not_found_exception_handler)

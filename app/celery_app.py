@@ -1,15 +1,8 @@
 from celery import Celery
+from app.config import settings
 
 celery_app = Celery(
     "delivery_service",
-    broker="redis://localhost:6379/0",
-    include=["app.tasks.delivery_cost"],
+    broker=settings.rabbitmq_url,
+    include=["app.tasks.parcel_registration"],
 )
-
-
-celery_app.conf.beat_schedule = {
-    "calculate-delivery-costs": {
-        "task": "app.tasks.delivery_cost.calculate_delivery_costs_task",
-        "schedule": 300.0,  # 5 минут
-    },
-}

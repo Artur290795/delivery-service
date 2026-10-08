@@ -19,7 +19,8 @@ class ParcelCreate(BaseModel):
 
 
 class ParcelCreateResponse(BaseModel):
-    id: int
+    status: str
+    task_id: str
 
 
 class ParcelResponse(BaseModel):

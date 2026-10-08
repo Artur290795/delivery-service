@@ -1,40 +1,69 @@
+from datetime import datetime, timezone
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.exceptions import InvalidParcelTypeException, ParcelNotFoundException
-from app.models.parcel import Parcel
+from app.models import Parcel, LogData
+from app.protocols import Cache, RateProvider
 from app.repositories import ParcelRepository, ParcelTypeRepository
 from app.schemas import (
     ParcelCreate,
-    ParcelCreateResponse,
     ParcelResponse,
     ParcelType,
 )
+from app.services.delivery_cost_log import DeliveryCostLogService
+from app.services.delivery_cost import DeliveryCostService
+from app.services.exchange_rate import ExchangeRateService
 
 
 class ParcelService:
 
     @staticmethod
-    async def create(
+    async def create_calculated(
         session: AsyncSession,
         parcel_create: ParcelCreate,
         session_id: str,
-    ):
+        cache: Cache,
+        rate_provider: RateProvider,
+        delivery_cost_log_service: DeliveryCostLogService,
+    ) -> int:
         parcel_data = parcel_create.model_dump()
         parcel_data["session_id"] = session_id
+
         parcel_type = await ParcelTypeRepository.get_by_name(
             session, parcel_create.type.value
         )
-        if parcel_type:
-            parcel_data["type_id"] = parcel_type.id
-            del parcel_data["type"]
-            try:
-                new_parcel = await ParcelRepository.create(session, parcel_data)
-                parcel_id = new_parcel.id
-                await session.commit()
-                return ParcelCreateResponse(id=parcel_id)
-            except Exception:
-                await session.rollback()
-                raise
-        raise InvalidParcelTypeException("Invalid type of parcel")
+        if not parcel_type:
+            raise InvalidParcelTypeException("Invalid type of parcel")
+
+        parcel_data["type_id"] = parcel_type.id
+        del parcel_data["type"]
+
+        try:
+            rate = await ExchangeRateService.get_usd_rub_rate(cache, rate_provider)
+            delivery_cost = DeliveryCostService.calculate(
+                weight=parcel_create.weight,
+                content_cost_usd=parcel_create.content_cost_usd,
+                usd_rub_rate=rate,
+            )
+            parcel_data["delivery_cost_rub"] = delivery_cost
+            new_parcel = await ParcelRepository.create(session, parcel_data)
+            parcel_id = new_parcel.id
+            parcel_type_name = parcel_type.name
+            new_parcel_id = new_parcel.id
+            await session.commit()
+
+            await delivery_cost_log_service.create_log(
+                LogData(
+                    parcel_id=parcel_id,
+                    parcel_type=parcel_type_name,
+                    delivery_cost=delivery_cost,
+                    calculated_at=datetime.now(timezone.utc),
+                )
+            )
+            return new_parcel_id
+        except Exception:
+            await session.rollback()
+            raise
 
     @staticmethod
     async def get_user_parcels(
@@ -62,14 +91,14 @@ class ParcelService:
 
     @staticmethod
     async def get_parcel_by_id(
-        session: AsyncSession,
-        parcel_id: int,
-        session_id: str
+        session: AsyncSession, parcel_id: int, session_id: str
     ) -> ParcelResponse:
-        
+
         parcel = await ParcelRepository.get_parcel_by_id(session, parcel_id, session_id)
         if not parcel:
-            raise ParcelNotFoundException(f"Parcel with id {parcel_id} not found for the given session.")
+            raise ParcelNotFoundException(
+                f"Parcel with id {parcel_id} not found for the given session."
+            )
         parcel_dict = ParcelService.get_parcel(parcel)
         return ParcelResponse(**parcel_dict)
 
