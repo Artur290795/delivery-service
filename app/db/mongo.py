@@ -1,3 +1,5 @@
+"""Подключение к MongoDB и доступ к коллекциям приложения."""
+
 from pymongo import AsyncMongoClient
 
 from app.config import settings

@@ -1,3 +1,5 @@
+"""Экспорт сервисов предметной области."""
+
 from app.services.parcel import ParcelService
 from app.services.parcel_type import ParcelTypeService
 from app.services.delivery_cost_log import DeliveryCostLogService

@@ -1,7 +1,10 @@
+"""Сервис построения векторных представлений текста."""
+
 from sentence_transformers import SentenceTransformer
 
 
 class EmbeddingService:
+    """Сервис преобразования текста в эмбеддинги."""
 
     def __init__(self):
         self.model = SentenceTransformer(

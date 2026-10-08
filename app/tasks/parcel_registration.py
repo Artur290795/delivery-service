@@ -1,5 +1,8 @@
+"""Фоновая Celery-задача асинхронной регистрации посылки."""
+
 import asyncio
 import httpx
+from loguru import logger
 
 from redis.asyncio import Redis
 
@@ -14,7 +17,17 @@ from app.celery_app import celery_app
 
 @celery_app.task
 def register_parcel_task(parcel_data: dict, session_id: str) -> int:
-    return asyncio.run(register_parcel(parcel_data, session_id))
+    logger.info("Parcel registration task started")
+    try:
+        parcel_id = asyncio.run(register_parcel(parcel_data, session_id))
+    except Exception:
+        logger.exception("Parcel registration task failed")
+        raise
+    logger.info(
+        "Parcel registration task completed: parcel_id={parcel_id}",
+        parcel_id=parcel_id,
+    )
+    return parcel_id
 
 
 async def register_parcel(parcel_data: dict, session_id: str) -> int:

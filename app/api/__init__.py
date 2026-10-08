@@ -1,3 +1,5 @@
+"""Пакет HTTP API сервиса доставки."""
+
 from app.api.dependencies import (
     get_delivery_cost_log_service,
     get_http_client,

@@ -1,3 +1,5 @@
+"""Маршруты для просмотра агрегированных расходов на доставку."""
+
 from datetime import date
 
 from fastapi import APIRouter, Depends

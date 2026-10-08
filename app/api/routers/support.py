@@ -1,3 +1,5 @@
+"""Маршрут AI-поддержки пользователей сервиса доставки."""
+
 from fastapi import APIRouter, Depends
 
 from app.api.dependencies import get_support_service

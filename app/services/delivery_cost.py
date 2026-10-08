@@ -1,7 +1,10 @@
+"""Расчёт стоимости доставки посылки."""
+
 from decimal import Decimal, ROUND_HALF_UP
 
 
 class DeliveryCostService:
+    """Сервис расчёта стоимости доставки."""
 
     @staticmethod
     def calculate(

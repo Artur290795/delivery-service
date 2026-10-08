@@ -1,3 +1,5 @@
+"""Репозиторий журнала расчётов доставки в MongoDB."""
+
 from bson import Decimal128
 from datetime import date, datetime, timedelta
 
@@ -5,6 +7,7 @@ from app.models import LogData
 
 
 class DeliveryCostLogRepository:
+    """Репозиторий записей журнала стоимости доставки."""
     def __init__(self, collection):
         self.collection = collection
 

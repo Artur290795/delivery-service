@@ -1,6 +1,9 @@
+"""Сервис регистрации и просмотра посылок."""
+
 from datetime import datetime, timezone
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from loguru import logger
 from app.exceptions import InvalidParcelTypeException, ParcelNotFoundException
 from app.models import Parcel, LogData
 from app.protocols import Cache, RateProvider
@@ -16,6 +19,7 @@ from app.services.exchange_rate import ExchangeRateService
 
 
 class ParcelService:
+    """ORM-представление посылки пользователя и рассчитанной стоимости доставки."""
 
     @staticmethod
     async def create_calculated(
@@ -49,7 +53,6 @@ class ParcelService:
             new_parcel = await ParcelRepository.create(session, parcel_data)
             parcel_id = new_parcel.id
             parcel_type_name = parcel_type.name
-            new_parcel_id = new_parcel.id
             await session.commit()
 
             await delivery_cost_log_service.create_log(
@@ -60,8 +63,14 @@ class ParcelService:
                     calculated_at=datetime.now(timezone.utc),
                 )
             )
-            return new_parcel_id
+            logger.info(
+                "Parcel persisted: parcel_id={parcel_id}, delivery_cost={delivery_cost}",
+                parcel_id=parcel_id,
+                delivery_cost=delivery_cost,
+            )
+            return parcel_id
         except Exception:
+            logger.exception("Failed to persist parcel registration")
             await session.rollback()
             raise
 

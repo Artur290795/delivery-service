@@ -1,3 +1,5 @@
+"""ORM-модель посылки."""
+
 from decimal import Decimal
 
 from sqlalchemy import ForeignKey, CheckConstraint, Numeric
@@ -6,6 +8,7 @@ from app.models.base import Base
 from app.models.parcel_type import ParcelType
 
 class Parcel(Base):
+    """ORM-представление посылки пользователя и рассчитанной стоимости доставки."""
     __tablename__ = "parcels"
     __table_args__ = (
         CheckConstraint("weight > 0"),
@@ -21,4 +24,3 @@ class Parcel(Base):
     delivery_cost_rub: Mapped[Decimal | None] = mapped_column(Numeric(precision=12, scale=2), nullable=True)
 
     type: Mapped["ParcelType"] = relationship()
-

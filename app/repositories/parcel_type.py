@@ -1,9 +1,12 @@
+"""Репозиторий типов посылок в PostgreSQL."""
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import ParcelType
 
 
 class ParcelTypeRepository:
+    """Репозиторий доступа к справочнику типов посылок."""
     
     @staticmethod
     async def get_by_name(session: AsyncSession, name: str):
@@ -16,4 +19,3 @@ class ParcelTypeRepository:
         stmt = select(ParcelType)
         result = await session.execute(stmt)
         return result.scalars().all()
-    

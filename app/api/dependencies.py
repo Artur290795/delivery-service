@@ -1,3 +1,5 @@
+"""Зависимости FastAPI для доступа к инфраструктуре и сервисам."""
+
 import httpx
 from fastapi import Request
 from app.db import async_session_maker

@@ -1,6 +1,9 @@
+"""Точка входа FastAPI-приложения сервиса доставки."""
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 import httpx
+from loguru import logger
 
 from app.exceptions import parcel_not_found_exception_handler, ParcelNotFoundException
 from app.repositories import DeliveryCostLogRepository
@@ -57,7 +60,10 @@ async def lifespan(app: FastAPI):
     delivery_cost_log_repo = DeliveryCostLogRepository(collection)
     app.state.delivery_cost_log_service = DeliveryCostLogService(delivery_cost_log_repo)
 
+    logger.info("Application started successfully")
+
     yield
+    logger.info("Application shutdown started")
     await http_client.aclose()
     await mongo_client.aclose()
 

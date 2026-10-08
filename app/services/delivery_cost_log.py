@@ -1,3 +1,5 @@
+"""Сервис журналирования и агрегации стоимости доставки."""
+
 from datetime import date
 from decimal import Decimal
 
@@ -7,6 +9,7 @@ from app.schemas import ParcelType
 
 
 class DeliveryCostLogService:
+    """Сервис создания журналов и агрегации расходов на доставку."""
     def __init__(self, delivery_cost_log_repo: DeliveryCostLogRepository):
         self.log_data_repository = delivery_cost_log_repo
 

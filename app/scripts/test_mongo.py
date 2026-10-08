@@ -1,3 +1,5 @@
+"""Диагностический скрипт проверки MongoDB."""
+
 import asyncio
 from bson.decimal128 import Decimal128
 from datetime import datetime, timezone

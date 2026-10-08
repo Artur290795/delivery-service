@@ -1,3 +1,5 @@
+"""HTTP-клиент Центрального банка России для получения курса USD/RUB."""
+
 from decimal import Decimal
 
 import httpx
@@ -6,6 +8,7 @@ from app.config import settings
 
 
 class CBRClient:
+    """Клиент HTTP API ЦБ РФ для получения курса доллара."""
     def __init__(self, client: httpx.AsyncClient):
         self.client = client
 

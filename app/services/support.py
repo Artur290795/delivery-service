@@ -1,8 +1,11 @@
+"""RAG-сервис поддержки пользователей."""
+
 from app.services import EmbeddingService, LLMService
 from app.clients import QdrantClient
 
 
 class SupportService:
+    """Сервис ответов поддержки на основе поиска по базе знаний."""
     _NO_ANSWER_MESSAGE = (
         "Похоже, этот вопрос не относится к службе доставки. "
         "Я могу помочь с вопросами о посылках, доставке и её стоимости."

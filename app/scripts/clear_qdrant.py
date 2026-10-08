@@ -1,3 +1,5 @@
+"""Скрипт очистки коллекции базы знаний Qdrant."""
+
 import asyncio
 
 from app.clients import QdrantClient

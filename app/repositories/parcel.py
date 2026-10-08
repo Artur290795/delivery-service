@@ -1,3 +1,5 @@
+"""Репозиторий посылок в PostgreSQL."""
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select
@@ -5,6 +7,7 @@ from app.models import Parcel, ParcelType
 
 
 class ParcelRepository:
+    """Репозиторий CRUD-операций над посылками."""
 
     @staticmethod
     async def create(session: AsyncSession, parcel_data: dict):

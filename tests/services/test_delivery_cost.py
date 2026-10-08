@@ -2,7 +2,6 @@ from decimal import Decimal
 
 import pytest
 
-from app.models import Parcel
 from app.services import DeliveryCostService
 
 
@@ -33,17 +32,3 @@ def test_calculate(weight, content_cost_usd, usd_rub_rate, expected):
     result = DeliveryCostService.calculate(weight, content_cost_usd, usd_rub_rate)
 
     assert result == expected
-
-
-def make_parcel(
-    *,
-    weight: Decimal = Decimal("10"),
-    content_cost_usd: Decimal = Decimal("100"),
-    delivery_cost_rub: Decimal | None = None,
-) -> Parcel:
-    return Parcel(
-        weight=weight,
-        content_cost_usd=content_cost_usd,
-        delivery_cost_rub=delivery_cost_rub,
-    )
-

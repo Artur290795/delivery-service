@@ -1,3 +1,5 @@
+"""Создание и проверка пользовательских сессий в Redis."""
+
 import secrets
 from app.cache import redis
 from app.config import settings

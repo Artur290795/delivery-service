@@ -1,3 +1,5 @@
+"""Экспорт Pydantic-схем HTTP API."""
+
 from app.schemas.parcel import (
     ParcelCreate,
     ParcelCreateResponse,
