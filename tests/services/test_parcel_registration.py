@@ -3,16 +3,17 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 import pytest
+from tests.services.test_exchange_rate import FakeCache, FakeRateProvider
 
 from app.schemas import ParcelCreate, ParcelType
 from app.services import ParcelService
-from tests.services.test_exchange_rate import FakeCache, FakeRateProvider
+
 
 @pytest.mark.asyncio
 async def test_creates_parcel_with_calculated_delivery_cost():
     session = AsyncMock()
     log_service = AsyncMock()
-    
+
     parcel_type = SimpleNamespace(id=2, name="electronics")
     saved_parcel = SimpleNamespace(id=42)
 

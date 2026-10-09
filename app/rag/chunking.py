@@ -1,9 +1,8 @@
 """Разбиение документов на контекстные текстовые фрагменты."""
 
+
 def split_text(text: str) -> list[str]:
-    paragraphs = [
-        paragraph.strip() for paragraph in text.split("\n") if paragraph.strip()
-    ]
+    paragraphs = [paragraph.strip() for paragraph in text.split("\n") if paragraph.strip()]
 
     chunks = []
 

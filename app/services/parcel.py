@@ -1,11 +1,12 @@
 """Сервис регистрации и просмотра посылок."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.exceptions import InvalidParcelTypeException, ParcelNotFoundException
-from app.models import Parcel, LogData
+from app.models import LogData, Parcel
 from app.protocols import Cache, RateProvider
 from app.repositories import ParcelRepository, ParcelTypeRepository
 from app.schemas import (
@@ -13,8 +14,8 @@ from app.schemas import (
     ParcelResponse,
     ParcelType,
 )
-from app.services.delivery_cost_log import DeliveryCostLogService
 from app.services.delivery_cost import DeliveryCostService
+from app.services.delivery_cost_log import DeliveryCostLogService
 from app.services.exchange_rate import ExchangeRateService
 
 
@@ -33,9 +34,7 @@ class ParcelService:
         parcel_data = parcel_create.model_dump()
         parcel_data["session_id"] = session_id
 
-        parcel_type = await ParcelTypeRepository.get_by_name(
-            session, parcel_create.type.value
-        )
+        parcel_type = await ParcelTypeRepository.get_by_name(session, parcel_create.type.value)
         if not parcel_type:
             raise InvalidParcelTypeException("Invalid type of parcel")
 
@@ -60,7 +59,7 @@ class ParcelService:
                     parcel_id=parcel_id,
                     parcel_type=parcel_type_name,
                     delivery_cost=delivery_cost,
-                    calculated_at=datetime.now(timezone.utc),
+                    calculated_at=datetime.now(UTC),
                 )
             )
             logger.info(
@@ -112,7 +111,7 @@ class ParcelService:
         return ParcelResponse(**parcel_dict)
 
     @staticmethod
-    def get_parcel(parcel: Parcel) -> ParcelResponse:
+    def get_parcel(parcel: Parcel) -> dict:
         parcel_dict = {
             "id": parcel.id,
             "name": parcel.name,

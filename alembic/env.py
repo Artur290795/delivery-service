@@ -1,13 +1,12 @@
 import asyncio
 from logging.config import fileConfig
 
-from sqlalchemy.ext.asyncio import async_engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
+from sqlalchemy import pool
+from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.config import settings
-from app.models import Base, Parcel, ParcelType
+from app.models import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -64,6 +63,7 @@ def run_migrations_online() -> None:
     """
     asyncio.run(run_async_migrations())
 
+
 def do_run_migrations(connection):
     context.configure(
         connection=connection,
@@ -73,14 +73,17 @@ def do_run_migrations(connection):
     with context.begin_transaction():
         context.run_migrations()
 
+
 async def run_async_migrations():
-    async_engine = async_engine_from_config(configuration=config.get_section(config.config_ini_section, {}),
-                                          prefix="sqlalchemy.",
-                                          poolclass=pool.NullPool,
-                                          )
+    async_engine = async_engine_from_config(
+        configuration=config.get_section(config.config_ini_section, {}),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
     async with async_engine.connect() as connection:
         await connection.run_sync(do_run_migrations)
     await async_engine.dispose()
+
 
 if context.is_offline_mode():
     run_migrations_offline()

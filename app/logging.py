@@ -1,12 +1,11 @@
 """Настройка прикладного логгирования через Loguru."""
 
-import sys
 from pathlib import Path
+import sys
 
 from loguru import logger
 
 from app.config import settings
-
 
 _is_configured = False
 
@@ -25,8 +24,7 @@ def configure_logging() -> None:
         sys.stderr,
         level=settings.log_level,
         format=(
-            "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level:<8} | "
-            "{name}:{function}:{line} | {message}"
+            "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level:<8} | {name}:{function}:{line} | {message}"
         ),
     )
     logger.add(
@@ -39,8 +37,7 @@ def configure_logging() -> None:
         backtrace=False,
         diagnose=False,
         format=(
-            "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level:<8} | "
-            "{name}:{function}:{line} | {message}"
+            "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level:<8} | {name}:{function}:{line} | {message}"
         ),
     )
     _is_configured = True

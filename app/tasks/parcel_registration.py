@@ -1,18 +1,18 @@
 """Фоновая Celery-задача асинхронной регистрации посылки."""
 
 import asyncio
+
 import httpx
 from loguru import logger
-
 from redis.asyncio import Redis
 
+from app.celery_app import celery_app
 from app.clients import CBRClient
 from app.config import settings
 from app.db import async_session_maker, get_delivery_cost_log_collection
 from app.repositories import DeliveryCostLogRepository
 from app.schemas import ParcelCreate
 from app.services import DeliveryCostLogService, ParcelService
-from app.celery_app import celery_app
 
 
 @celery_app.task
@@ -43,7 +43,7 @@ async def register_parcel(parcel_data: dict, session_id: str) -> int:
                     session=session,
                     parcel_create=parcel,
                     session_id=session_id,
-                    cache=cache,
+                    cache=cache,  # type: ignore[arg-type]
                     rate_provider=CBRClient(client),
                     delivery_cost_log_service=log_service,
                 )

@@ -1,8 +1,10 @@
 """Создание и проверка пользовательских сессий в Redis."""
 
 import secrets
+
 from app.cache import redis
 from app.config import settings
+
 
 async def create_session() -> str:
     session_id = secrets.token_urlsafe(32)

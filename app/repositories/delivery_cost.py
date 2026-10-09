@@ -1,13 +1,15 @@
 """Репозиторий журнала расчётов доставки в MongoDB."""
 
-from bson import Decimal128
 from datetime import date, datetime, timedelta
+
+from bson import Decimal128
 
 from app.models import LogData
 
 
 class DeliveryCostLogRepository:
     """Репозиторий записей журнала стоимости доставки."""
+
     def __init__(self, collection):
         self.collection = collection
 
@@ -21,9 +23,7 @@ class DeliveryCostLogRepository:
             }
         )
 
-    async def get_logs_by_date_and_type(
-        self, date: date, parcel_type: str
-    ) -> list[LogData]:
+    async def get_logs_by_date_and_type(self, date: date, parcel_type: str) -> list[LogData]:
         start_of_day = datetime.combine(date, datetime.min.time())
         next_day = start_of_day + timedelta(days=1)
         pipeline = [

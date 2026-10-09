@@ -1,11 +1,12 @@
 """RAG-сервис поддержки пользователей."""
 
-from app.services import EmbeddingService, LLMService
 from app.clients import QdrantClient
+from app.services import EmbeddingService, LLMService
 
 
 class SupportService:
     """Сервис ответов поддержки на основе поиска по базе знаний."""
+
     _NO_ANSWER_MESSAGE = (
         "Похоже, этот вопрос не относится к службе доставки. "
         "Я могу помочь с вопросами о посылках, доставке и её стоимости."
@@ -26,7 +27,8 @@ class SupportService:
         similar = await self.qdrant_client.search_similar(vector)
         if similar and similar.score >= 0.6:
             answer = await self.llm_service.generate_answer(
-                question, similar.payload["text"]
+                question,
+                similar.payload["text"],  # type: ignore[index]
             )
             return answer
         return self._NO_ANSWER_MESSAGE

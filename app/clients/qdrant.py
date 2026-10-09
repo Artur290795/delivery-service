@@ -1,14 +1,15 @@
 """Клиент векторного хранилища Qdrant."""
 
 from qdrant_client import AsyncQdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct, ScoredPoint
 from qdrant_client.http.exceptions import UnexpectedResponse
+from qdrant_client.models import Distance, PointStruct, ScoredPoint, VectorParams
 
 from app.config import settings
 
 
 class QdrantClient:
     """Клиент Qdrant для хранения и поиска векторных документов."""
+
     def __init__(self):
         self.client = AsyncQdrantClient(url=settings.qdrant_url)
         self.collection_name = settings.qdrant_collection_name

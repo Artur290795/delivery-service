@@ -1,29 +1,30 @@
 """Точка входа FastAPI-приложения сервиса доставки."""
 
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 import httpx
 from loguru import logger
 
-from app.exceptions import parcel_not_found_exception_handler, ParcelNotFoundException
+from app.api import (
+    delivery_costs_router,
+    parcel_router,
+    parcel_types_router,
+    support_router,
+)
+from app.clients import QdrantClient
+from app.config import settings
+from app.db import get_delivery_cost_log_collection, mongo_client
+from app.exceptions import ParcelNotFoundException, parcel_not_found_exception_handler
+from app.rag import IngestionService
 from app.repositories import DeliveryCostLogRepository
 from app.services import (
     DeliveryCostLogService,
-    SupportService,
     EmbeddingService,
     LLMService,
+    SupportService,
 )
 from app.sessions import create_session, session_exists
-from app.api import (
-    parcel_types_router,
-    parcel_router,
-    support_router,
-    delivery_costs_router,
-)
-from app.clients import QdrantClient
-from app.rag import IngestionService
-from app.db import get_delivery_cost_log_collection, mongo_client
-from app.config import settings
 
 # DOCUMENT = """
 # Доставка одежды осуществляется по России.
@@ -46,9 +47,7 @@ async def lifespan(app: FastAPI):
 
     ingestion_service = IngestionService(emb_service, qdrant_client)
     app.state.ingestion_service = ingestion_service
-    llm_service = LLMService(
-        api_key=settings.yandex_api_key, folder_id=settings.yandex_folder_id
-    )
+    llm_service = LLMService(api_key=settings.yandex_api_key, folder_id=settings.yandex_folder_id)
     support_service = SupportService(emb_service, qdrant_client, llm_service)
     app.state.support_service = support_service
 
@@ -81,10 +80,7 @@ async def session_middleware(request: Request, call_next):
     session_id = request.cookies.get("session_id")
     is_new_session = False
 
-    if session_id is None:
-        session_id = await create_session()
-        is_new_session = True
-    elif not await session_exists(session_id):
+    if session_id is None or not await session_exists(session_id):
         session_id = await create_session()
         is_new_session = True
 

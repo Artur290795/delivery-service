@@ -4,8 +4,9 @@ from decimal import Decimal
 
 from loguru import logger
 
-from app.protocols import RateProvider, Cache
 from app.config import settings
+from app.protocols import Cache, RateProvider
+
 
 class ExchangeRateService:
     """Сервис кэшированного получения курса USD/RUB."""
@@ -14,13 +15,13 @@ class ExchangeRateService:
 
     @staticmethod
     async def get_usd_rub_rate(cache: Cache, rate_provider: RateProvider) -> Decimal:
-        rate = await cache.get(ExchangeRateService._REDIS_KEY)
-        if rate is not None:
+        cached_rate = await cache.get(ExchangeRateService._REDIS_KEY)
+        if cached_rate is not None:
             logger.debug("USD/RUB rate retrieved from cache")
-            return Decimal(rate.decode("utf-8"))
+            return Decimal(cached_rate.decode("utf-8"))
         rate = await rate_provider.get_usd_rub_rate()
         logger.info("USD/RUB rate retrieved from provider")
-        
+
         await cache.set(
             ExchangeRateService._REDIS_KEY,
             str(rate),

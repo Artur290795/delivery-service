@@ -7,6 +7,7 @@ from app.config import settings
 
 class LLMService:
     """Адаптер YandexGPT для генерации ответов на вопросы."""
+
     def __init__(self, api_key: str, folder_id: str):
         self.client = AsyncOpenAI(
             api_key=api_key,

@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     """Типизированные настройки приложения из переменных окружения и файла .env."""
+
     database_url: str
     database_echo: bool = False
 
@@ -33,9 +34,7 @@ class Settings(BaseSettings):
     log_rotation: str = "10 MB"
     log_retention: str = "14 days"
 
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 
 settings = Settings()

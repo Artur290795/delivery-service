@@ -1,6 +1,7 @@
 """Конфигурация Celery и подключения к очереди RabbitMQ."""
 
 from celery import Celery
+
 from app.config import settings
 from app.logging import configure_logging
 
