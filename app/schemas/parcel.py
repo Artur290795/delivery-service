@@ -1,12 +1,12 @@
 """Схемы запросов и ответов для работы с посылками."""
 
 from decimal import Decimal
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 
-class ParcelType(str, Enum):
+class ParcelType(StrEnum):
     """Тип посылки: ORM-модель справочника или значение API-схемы."""
 
     CLOTHES = "clothes"

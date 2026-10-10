@@ -1,7 +1,6 @@
 """Маршруты для асинхронной регистрации и просмотра посылок."""
 
 from fastapi import APIRouter, Depends, Query, Request, status
-from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import get_session
@@ -20,11 +19,7 @@ router = APIRouter()
 @router.post("/parcels", response_model=ParcelCreateResponse, status_code=status.HTTP_202_ACCEPTED)
 async def create_parcel(request: Request, parcel: ParcelCreate):
     task = register_parcel_task.delay(parcel.model_dump(mode="json"), request.state.session_id)
-    logger.info(
-        "Parcel registration task published: task_id={task_id}, parcel_type={parcel_type}",
-        task_id=task.id,
-        parcel_type=parcel.type.value,
-    )
+
     return ParcelCreateResponse(status="accepted", task_id=task.id)
 
 
